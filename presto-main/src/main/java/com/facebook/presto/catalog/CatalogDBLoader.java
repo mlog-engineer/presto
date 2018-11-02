@@ -42,7 +42,7 @@ public class CatalogDBLoader
             throws Exception
     {
         ImmutableMap.Builder builder = ImmutableMap.builder();
-        String sql = "SELECT * FROM presto.catalog";
+        String sql = "SELECT * FROM catalog";
         try (Connection connection = openConnection();
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(sql)) {
@@ -51,7 +51,7 @@ public class CatalogDBLoader
             while (resultSet.next()) {
                 String catalogName = resultSet.getString("catalog_name");
                 String connectorName = resultSet.getString("connector_name");
-                String properties = resultSet.getString("properties");
+                String properties = replaceVariable(resultSet.getString("properties"));
                 if (!Strings.isNullOrEmpty(catalogName)
                         && !Strings.isNullOrEmpty(connectorName)
                         && !Strings.isNullOrEmpty(properties)) {

@@ -14,7 +14,10 @@
 package com.facebook.presto.catalog;
 
 import com.facebook.presto.metadata.DynamicCatalogStoreConfig;
+import com.google.common.base.Strings;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 public abstract class CatalogLoader
@@ -28,4 +31,14 @@ public abstract class CatalogLoader
 
     public abstract Map<String, CatalogInfo> load()
             throws Exception;
+
+    protected String replaceVariable(String origin)
+            throws UnknownHostException
+    {
+        if (!Strings.isNullOrEmpty(origin)) {
+            String hostname = InetAddress.getLocalHost().getHostName();
+            return origin.replaceAll("_HOST", hostname);
+        }
+        return origin;
+    }
 }

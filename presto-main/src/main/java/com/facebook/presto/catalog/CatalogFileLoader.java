@@ -47,7 +47,12 @@ public class CatalogFileLoader
         for (File file : listFiles(this.config.getCatalogConfigurationDir())) {
             if (file.isFile() && file.getName().endsWith(".properties")) {
                 String catalogName = Files.getNameWithoutExtension(file.getName());
-                Map<String, String> properties = new HashMap<>(loadProperties(file));
+                Map<String, String> originProperties = loadProperties(file);
+                Map<String, String> properties = new HashMap<>();
+                for (String key : originProperties.keySet()) {
+                    properties.put(key, replaceVariable(originProperties.get(key)));
+                }
+
                 String connectorName = properties.remove("connector.name");
                 checkState(connectorName != null, "Catalog configuration %s does not contain connector.name", file.getAbsoluteFile());
                 if (!Strings.isNullOrEmpty(catalogName)
